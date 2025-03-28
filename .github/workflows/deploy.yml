@@ -23,7 +23,7 @@ jobs:
         run: flutter pub get
 
       - name: 🏗️ Construir Proyecto para Web
-        run: flutter build web --release
+        run: flutter build web --release --base-href /${{ github.repository }}/
 
       - name: 📤 Deploy a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
