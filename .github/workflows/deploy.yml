@@ -1,0 +1,37 @@
+name: Deploy Flutter Web using FVM to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Clonar el Repositorio
+        uses: actions/checkout@v3
+
+      - name: 📥 Instalar FVM
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/leoafarias/fvm/master/install.sh | bash
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      - name: 🚀 Usar la versión de Flutter especificada en FVM
+        run: |
+          fvm install
+          fvm use --force
+          echo "FLUTTER_BIN=$(fvm flutter --version)" >> $GITHUB_ENV
+
+      - name: 📦 Instalar Dependencias
+        run: fvm flutter pub get
+
+      - name: 🏗️ Construir Proyecto para Web
+        run: fvm flutter build web --release
+
+      - name: 📤 Deploy a GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: build/web
